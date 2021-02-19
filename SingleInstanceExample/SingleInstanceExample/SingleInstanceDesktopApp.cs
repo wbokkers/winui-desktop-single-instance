@@ -95,13 +95,12 @@ namespace WimBokkers.WinUI
         private void CreateNamedPipeServer()
         {
             _namedPipeServerStream = new NamedPipeServerStream(
-                _pipeName,
-                PipeDirection.In,
-                1,
+                _pipeName,  PipeDirection.In,
+                maxNumberOfServerInstances: 1,
                 PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous,
-                0,
-                0);
+                inBufferSize: 0,
+                outBufferSize: 0);
 
             _namedPipeServerStream.BeginWaitForConnection(OnNamedPipeServerConnected, _namedPipeServerStream);
         }
@@ -122,14 +121,14 @@ namespace WimBokkers.WinUI
             }
         }
 
-        private void OnNamedPipeServerConnected(IAsyncResult iAsyncResult)
+        private void OnNamedPipeServerConnected(IAsyncResult asyncResult)
         {
             try
             {
                 if (_namedPipeServerStream == null)
                     return;
 
-                _namedPipeServerStream.EndWaitForConnection(iAsyncResult);
+                _namedPipeServerStream.EndWaitForConnection(asyncResult);
 
                 // Read the arguments from the pipe
                 lock (_namedPiperServerThreadLock)
