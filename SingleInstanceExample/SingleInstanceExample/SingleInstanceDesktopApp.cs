@@ -1,12 +1,13 @@
 ﻿#nullable enable
 
+using Microsoft.UI.Xaml;
 using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
 
-namespace SingleInstanceExample
+namespace WimBokkers.WinUI
 {
     public class SingleInstanceLaunchEventArgs : EventArgs
     {
@@ -58,7 +59,8 @@ namespace SingleInstanceExample
             else
             {
                 SendArgumentsToRunningInstance(arguments);
-                App.Current.Exit();
+
+                Application.Current.Exit();
             }
         }
 
