@@ -7,7 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
+    <StackPanel Padding="20" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <TextBlock TextWrapping="Wrap" Text="Try to start this app multiple times to see that only this first app instance will ever run."/>
+        <TextBlock TextWrapping="Wrap" Margin="0,0,0,20" Text="Start this app from the command line (SingleInstanceExample &lt;arguments&gt;) to see that command line arguments are handled by this app instance."/>
+        <TextBlock Text="Command line arguments:" FontWeight="SemiBold"/>
+        <TextBlock TextWrapping="Wrap" x:Name="tbArguments" FontSize="20" FontWeight="SemiBold"/>
     </StackPanel>
 </Window>

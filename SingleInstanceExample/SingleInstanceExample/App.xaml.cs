@@ -11,7 +11,7 @@ namespace SingleInstanceExample
     public partial class App : Application
     {
         private readonly SingleInstanceDesktopApp _singleInstanceApp;
-        private Window _window;
+        private MainWindow _window;
 
         public App()
         {
@@ -30,7 +30,8 @@ namespace SingleInstanceExample
                 _window.Activate();
             }
 
-            // TODO: handle arguments (e.Arguments) 
+            // Show the command line arguments in the window
+            _window.ShowArguments(e.Arguments);
         }
 
         /// <summary>
