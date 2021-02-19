@@ -44,6 +44,9 @@ namespace WimBokkers.WinUI
         {
             if (string.IsNullOrEmpty(arguments))
             {
+                // The arguments from LaunchActivatedEventArgs can be empty, when
+                // the user specified arguments (e.g. when using an execution alias). For this reason we
+                // alternatively check for arguments using a different API.
                 var argList = System.Environment.GetCommandLineArgs();
                 if (argList.Length > 1)
                 {
@@ -87,11 +90,10 @@ namespace WimBokkers.WinUI
         }
 
         /// <summary>
-        ///     Starts a new pipe server if one isn't already active.
+        /// Starts a new pipe server if one isn't already active.
         /// </summary>
         private void CreateNamedPipeServer()
         {
-            // Create pipe and start the async connection wait
             _namedPipeServerStream = new NamedPipeServerStream(
                 _pipeName,
                 PipeDirection.In,
@@ -101,8 +103,7 @@ namespace WimBokkers.WinUI
                 0,
                 0);
 
-            // Begin async wait for connections
-            _namedPipeServerStream.BeginWaitForConnection(NamedPipeServerConnectionCallback, _namedPipeServerStream);
+            _namedPipeServerStream.BeginWaitForConnection(OnNamedPipeServerConnected, _namedPipeServerStream);
         }
 
         private void SendArgumentsToRunningInstance(string arguments)
@@ -121,20 +122,18 @@ namespace WimBokkers.WinUI
             }
         }
 
-        private void NamedPipeServerConnectionCallback(IAsyncResult iAsyncResult)
+        private void OnNamedPipeServerConnected(IAsyncResult iAsyncResult)
         {
             try
             {
                 if (_namedPipeServerStream == null)
                     return;
 
-                // End waiting for the connection
                 _namedPipeServerStream.EndWaitForConnection(iAsyncResult);
 
-                // Read data and prevent access to _namedPipeXmlPayload during threaded operations
+                // Read the arguments from the pipe
                 lock (_namedPiperServerThreadLock)
                 {
-                    // Read data from client
                     using var sr = new StreamReader(_namedPipeServerStream);
                     var args = sr.ReadToEnd();
                     Launched?.Invoke(this, new SingleInstanceLaunchEventArgs(args, isFirstLaunch: false));
@@ -142,9 +141,9 @@ namespace WimBokkers.WinUI
             }
             catch (ObjectDisposedException)
             {
-                // EndWaitForConnection will exception when someone calls closes the pipe before connection made
-                // In that case we dont create any more pipes and just return
-                // This will happen when app is closing and our pipe is closed/disposed
+                // EndWaitForConnection will throw when the pipe closes before there is a connection.
+                // In that case, we don't create more pipes and just return.
+                // This will happen when the app is closed and therefor the pipe is closed as well.
                 return;
             }
             catch (Exception)
