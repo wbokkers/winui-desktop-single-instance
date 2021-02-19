@@ -20,7 +20,7 @@ And see the arguments displayed in the main window:
 ## How to use this in your app?
 
 Add ```SingleInstanceDesktopApp.cs``` to your app and use this class from ```App.Xaml.cs```.
-Create an instance of SingleInstanceDesktop app in the constructor of the App class, and attach an event handler to the Launched event.
+Create an instance of SingleInstanceDesktopApp in the constructor of the App class, and attach an event handler to the Launched event.
 
 You need a unique ID for your app in the constructor of SingleInstanceDesktopApp. You can use a GUID string.
 
